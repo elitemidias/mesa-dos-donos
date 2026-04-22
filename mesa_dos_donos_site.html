@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mesa dos Donos | Fé no Front — Rio de Janeiro</title>
+  <meta name="description" content="Grupo gratuito no WhatsApp para empresários com CNPJ ativo no Rio de Janeiro. Sem curso, sem coach. Só quem constrói de verdade." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Phosphor Icons (thin) -->
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/thin/style.css" />
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:       #C9A227;
+      --gold-light: #D4B24E;
+      --bg:         #000000;
+      --bg2:        #111111;
+      --text:       #FFFFFF;
+      --text-muted: #888888;
+      --text-dim:   #555555;
+      --border:     rgba(201,162,39,0.2);
+      --ff-bebas:   'Bebas Neue', sans-serif;
+      --ff-inter:   'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ff-inter);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Grain */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+    }
+
+    /* ===== SHARED ===== */
+    section { position: relative; padding: 100px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .section-tag {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 18px; display: block;
+    }
+
+    .section-title {
+      font-family: var(--ff-bebas);
+      font-size: clamp(38px, 5.5vw, 68px);
+      line-height: 1; margin-bottom: 20px; letter-spacing: 1px;
+    }
+    .section-title span { color: var(--gold); }
+
+    .gold-line { width: 48px; height: 2px; background: var(--gold); margin-bottom: 36px; }
+
+    .reveal { opacity: 0; transform: translateY(36px); }
+
+    /* ===== MAGNETIC BUTTON ===== */
+    .btn-magnetic {
+      position: relative;
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 18px 44px;
+      background: var(--gold); color: #000;
+      border: none; border-radius: 2px;
+      font-family: var(--ff-inter); font-weight: 700;
+      font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
+      cursor: pointer; overflow: hidden; will-change: transform;
+      text-decoration: none; white-space: nowrap;
+    }
+    .btn-magnetic__label {
+      position: relative; z-index: 2;
+      display: inline-block; will-change: transform;
+    }
+    .btn-magnetic::before {
+      content: ''; position: absolute; inset: 0;
+      background: #fff; transform: translateY(101%);
+      transition: transform 0.45s cubic-bezier(0.7,0,0.3,1); z-index: 1;
+    }
+    .btn-magnetic:hover::before { transform: translateY(0); }
+
+    /* ===== HERO ===== */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 54fr 46fr;
+      align-items: center;
+      gap: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* Left column */
+    .hero__content {
+      position: relative; z-index: 2;
+      padding: clamp(60px, 10vh, 110px) clamp(32px, 5vw, 80px) clamp(60px, 8vh, 100px);
+    }
+
+    /* Ambient glow behind text */
+    .hero__content::before {
+      content: '';
+      position: absolute; top: 30%; left: -20%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(201,162,39,0.1) 0%, transparent 65%);
+      filter: blur(70px); pointer-events: none; z-index: 0;
+    }
+
+    .hero__content > * { position: relative; z-index: 1; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      border: 1px solid var(--gold);
+      color: var(--gold); font-size: 10px; font-weight: 600;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      padding: 8px 20px; margin-bottom: 32px;
+      opacity: 0;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px; background: var(--gold);
+      border-radius: 50%; animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.3; transform:scale(0.6); }
+    }
+
+    .hero-title {
+      font-family: var(--ff-bebas);
+      font-size: clamp(44px, 5.8vw, 88px);
+      line-height: 0.97; letter-spacing: 1.5px;
+      color: #fff; margin-bottom: 20px;
+    }
+    .hero-title .line {
+      display: block; overflow: hidden;
+      clip-path: inset(0 0 100% 0); will-change: clip-path;
+    }
+    .hero-title span { color: var(--gold); }
+
+    .hero-desc {
+      font-size: clamp(14px, 1.5vw, 16px);
+      color: rgba(255,255,255,0.6);
+      max-width: 440px; line-height: 1.8;
+      margin-bottom: 40px; opacity: 0;
+    }
+
+    .hero-cta-group { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; }
+
+    .hero-cta-micro {
+      font-size: 12px; color: var(--text-dim);
+      margin-top: 16px; letter-spacing: 0.4px; opacity: 0;
+    }
+
+    /* Right column — the cut-out PNG floats, no box */
+    .hero__visual {
+      position: relative;
+      height: 100vh;
+      display: flex; align-items: flex-end; justify-content: center;
+      overflow: hidden;
+      opacity: 0;
+    }
+
+    .hero__visual::after,
+    .hero__visual::before { display: none; }
+
+    .hero__visual img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      object-position: bottom center;
+      will-change: transform;
+    }
+
+    /* ===== STATS BAR ===== */
+    #stats {
+      padding: 0;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); }
+    .stat-item {
+      padding: 44px 24px; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: var(--ff-bebas); font-size: 56px;
+      color: var(--gold); line-height: 1; margin-bottom: 6px;
+    }
+    .stat-label { font-size: 10px; font-weight: 500; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
+
+    /* ===== PROBLEMA + FILTRO ===== */
+    #problema { background: var(--bg); }
+
+    .problema-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: start; margin-bottom: 88px;
+    }
+
+    .big-quote {
+      font-family: var(--ff-bebas);
+      font-size: clamp(24px, 3.2vw, 44px);
+      line-height: 1.12; color: rgba(255,255,255,0.45);
+      border-left: 3px solid var(--gold); padding-left: 22px; margin-bottom: 24px;
+    }
+    .big-quote em { color: rgba(255,255,255,0.85); font-style: normal; }
+
+    .problema-cards { display: flex; flex-direction: column; gap: 18px; }
+
+    .problema-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      padding: 26px 30px; position: relative; overflow: hidden;
+    }
+    .problema-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(201,162,39,0.03) 0%, transparent 60%);
+    }
+    .problema-card-num {
+      font-family: var(--ff-bebas); font-size: 48px;
+      color: rgba(201,162,39,0.1); line-height: 1;
+      position: absolute; top: 8px; right: 14px;
+    }
+    .problema-card h3 { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .problema-card p { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+
+    /* Filtro */
+    .filtro-wrap { border-top: 1px solid var(--border); padding-top: 72px; }
+    .filtro-header { margin-bottom: 48px; }
+
+    .filtro-grid {
+      display: grid; grid-template-columns: 1fr 1px 1fr;
+      gap: 0; align-items: start;
+    }
+    .filtro-divider { background: var(--border); align-self: stretch; margin: 0 48px; }
+
+    .filtro-col h3 {
+      font-family: var(--ff-bebas); font-size: 20px;
+      letter-spacing: 2px; margin-bottom: 26px;
+    }
+    .filtro-col h3.sim { color: var(--gold); }
+    .filtro-col h3.nao { color: rgba(255,255,255,0.2); }
+
+    .filtro-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .filtro-list li { display: flex; align-items: flex-start; gap: 11px; font-size: 14px; line-height: 1.55; }
+    .filtro-list.sim li { color: rgba(255,255,255,0.8); }
+    .filtro-list.nao li { color: var(--text-dim); }
+    .filtro-list li i { flex-shrink: 0; font-size: 18px; margin-top: 2px; }
+    .filtro-list.sim li i { color: #22c55e; }
+    .filtro-list.nao li i { color: #333; }
+
+    .filtro-bottom {
+      background: var(--bg2); border: 1px solid var(--border);
+      padding: 44px 52px; text-align: center; margin-top: 52px;
+    }
+    .filtro-bottom p {
+      font-size: 16px; color: rgba(255,255,255,0.6);
+      max-width: 520px; margin: 0 auto 32px; line-height: 1.8;
+    }
+
+    /* ===== SOLUÇÃO + MENTORES ===== */
+    #solucao { background: var(--bg2); border-top: 1px solid var(--border); }
+
+    .solucao-intro {
+      display: grid;
+      grid-template-columns: 45fr 55fr;
+      gap: 64px;
+      align-items: start;
+      margin-bottom: 72px;
+    }
+
+    .solucao-mock { width: 100%; border-radius: 12px; overflow: hidden; }
+    .solucao-mock img { width: 100%; height: auto; display: block; border-radius: 12px; }
+
+    .solucao-header { text-align: center; max-width: 700px; margin: 0 auto 16px; }
+    .solucao-header .gold-line { margin: 0 auto 24px; }
+
+    .solucao-intro .solucao-header { text-align: left; margin: 0 0 16px 0; }
+    .solucao-intro .solucao-header .gold-line { margin: 0 0 24px 0; }
+
+    .solucao-desc {
+      font-size: 17px; color: rgba(255,255,255,0.55);
+      line-height: 1.85; text-align: center;
+      max-width: 700px; margin: 0 auto 72px;
+    }
+
+    .solucao-intro .solucao-desc { text-align: left; margin: 0; }
+
+    .pilares-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; margin-bottom: 88px; }
+
+    .pilar-card {
+      background: var(--bg); border: 1px solid var(--border);
+      padding: 34px 22px; text-align: center;
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .pilar-card:hover { border-color: rgba(201,162,39,0.5); transform: translateY(-4px); }
+    .pilar-card::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0; height: 2px;
+      background: var(--gold); transform: scaleX(0); transition: transform 0.3s;
+    }
+    .pilar-card:hover::after { transform: scaleX(1); }
+
+    .pilar-icon {
+      width: 60px; height: 60px;
+      border: 1px solid rgba(201,162,39,0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px;
+    }
+    .pilar-icon i { font-size: 28px; color: var(--gold); }
+    .pilar-title {
+      font-family: var(--ff-bebas); font-size: 19px;
+      letter-spacing: 1px; color: var(--gold); margin-bottom: 10px;
+    }
+    .pilar-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+
+    /* Mentores */
+    .mentores-title-wrap { margin-bottom: 44px; }
+
+    .mentores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+
+    .mentor-card {
+      display: flex; flex-direction: column;
+      background: var(--bg); border: 1px solid var(--border);
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .mentor-card:hover { border-color: rgba(201,162,39,0.4); }
+    .mentor-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(to right, var(--gold), transparent);
+      z-index: 1;
+    }
+
+    .mentor-photo-wrap { position: relative; width: 100%; flex-shrink: 0; }
+    .mentor-photo {
+      width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: center 15%;
+      display: block; filter: grayscale(15%); transition: filter 0.4s;
+    }
+    .mentor-card:hover .mentor-photo { filter: grayscale(0%); }
+    .mentor-photo-border { display: none; }
+
+    .mentor-content { padding: 28px 26px 26px; flex: 1; }
+
+    .mentor-name { font-family: var(--ff-bebas); font-size: 26px; letter-spacing: 2px; color: #fff; margin-bottom: 4px; }
+    .mentor-role { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+    .mentor-bio { font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-bottom: 16px; }
+    .mentor-bio p { margin-bottom: 10px; }
+    .mentor-bio p:last-child { margin-bottom: 0; }
+    .mentor-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+    .mentor-tag {
+      border: 1px solid var(--border); color: var(--text-dim);
+      font-size: 9px; font-weight: 500; letter-spacing: 1px;
+      text-transform: uppercase; padding: 4px 10px;
+    }
+
+    /* ===== DEPOIMENTO + FAQ ===== */
+    #prova { background: var(--bg); border-top: 1px solid var(--border); }
+
+    .prova-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+
+    /* Google Review Card */
+    .review-wrap { display: flex; flex-direction: column; }
+
+    .review-card {
+      background: #111111;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px; padding: 26px;
+      position: relative;
+      transition: border-color 0.4s, transform 0.4s;
+    }
+    .review-card:hover { border-color: rgba(201,162,39,0.3); transform: translateY(-3px); }
+
+    .review-card__quote-mark {
+      position: absolute; top: 12px; right: 18px;
+      font-family: Georgia, serif; font-size: 64px; line-height: 1;
+      color: rgba(201,162,39,0.1); pointer-events: none; user-select: none;
+    }
+
+    .review-card__header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+
+    .review-card__avatar {
+      width: 46px; height: 46px; border-radius: 50%;
+      object-fit: cover; object-position: top;
+      border: 2px solid rgba(201,162,39,0.3); flex-shrink: 0;
+    }
+
+    .review-card__meta { flex: 1; }
+    .review-card__name { font-family: var(--ff-inter); font-weight: 600; font-size: 15px; color: #fff; line-height: 1.2; }
+    .review-card__subtitle { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+    .review-card__google { width: 20px; height: 20px; flex-shrink: 0; }
+
+    .review-card__stars { display: flex; gap: 2px; margin-bottom: 13px; }
+    .review-card__stars svg { width: 15px; height: 15px; fill: #FBBC04; }
+
+    .review-card__body {
+      font-family: var(--ff-inter); font-size: 15px;
+      line-height: 1.68; color: rgba(255,255,255,0.82);
+    }
+
+    /* FAQ */
+    .faq-item { border-bottom: 1px solid var(--border); }
+
+    .faq-question {
+      width: 100%; background: none; border: none;
+      color: rgba(255,255,255,0.85);
+      font-family: var(--ff-inter); font-size: 15px; font-weight: 600;
+      text-align: left; padding: 20px 0; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; line-height: 1.4; transition: color 0.2s;
+    }
+    .faq-question:hover, .faq-question.open { color: var(--gold); }
+
+    .faq-icon {
+      flex-shrink: 0; width: 24px; height: 24px;
+      border: 1px solid var(--border); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; color: var(--text-dim);
+      transition: transform 0.3s, border-color 0.3s, color 0.3s;
+    }
+    .faq-question.open .faq-icon { transform: rotate(45deg); border-color: var(--gold); color: var(--gold); }
+
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+    .faq-answer-inner { padding: 0 0 20px; font-size: 14px; color: var(--text-muted); line-height: 1.75; }
+
+    /* ===== FOOTER ===== */
+    footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 88px 24px 52px; }
+
+    .footer-cta { text-align: center; margin-bottom: 72px; }
+    .footer-cta-title {
+      font-family: var(--ff-bebas);
+      font-size: clamp(34px, 5vw, 60px); line-height: 1.05;
+      color: #fff; margin-bottom: 10px;
+    }
+    .footer-cta-title span { color: var(--gold); }
+    .footer-cta-sub { font-size: 14px; color: rgba(255,255,255,0.45); margin-bottom: 36px; }
+    .footer-cta-micro { font-size: 11px; color: var(--text-dim); margin-top: 14px; letter-spacing: 0.4px; }
+
+    .footer-divider { width: 100%; height: 1px; background: var(--border); margin-bottom: 40px; }
+
+    .footer-row {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px; flex-wrap: wrap;
+    }
+
+    .footer-logo { height: 44px; object-fit: contain; mix-blend-mode: screen; }
+    .footer-copy { font-size: 12px; color: var(--text-dim); }
+
+    .footer-brand { display: flex; align-items: center; gap: 10px; }
+    .footer-brand-label { font-size: 9px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+    .footer-fnf-logo { height: 22px; object-fit: contain; mix-blend-mode: screen; opacity: 0.6; transition: opacity 0.2s; }
+    .footer-fnf-logo:hover { opacity: 1; }
+
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { font-size: 12px; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+
+    /* ===== MODAL ===== */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(13,13,13,0.8);
+      backdrop-filter: blur(18px) saturate(120%);
+      -webkit-backdrop-filter: blur(18px) saturate(120%);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 10000; padding: 24px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .modal-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+    .modal {
+      width: min(440px, 100%);
+      background: linear-gradient(180deg, #161616 0%, #0D0D0D 100%);
+      border: 1px solid rgba(201,162,39,0.28);
+      border-radius: 8px; padding: 44px 36px 36px;
+      position: relative;
+      transform: translateY(28px) scale(0.95); opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease;
+      box-shadow: 0 28px 80px rgba(0,0,0,0.7), 0 -32px 100px rgba(201,162,39,0.06) inset;
+    }
+    .modal-backdrop.is-open .modal { transform: translateY(0) scale(1); opacity: 1; }
+
+    .modal__close {
+      position: absolute; top: 14px; right: 14px;
+      width: 30px; height: 30px;
+      background: transparent; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%; color: rgba(255,255,255,0.5);
+      cursor: pointer; font-size: 13px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s;
+    }
+    .modal__close:hover { border-color: var(--gold); color: var(--gold); }
+
+    .modal__badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(201,162,39,0.3); color: var(--gold);
+      font-size: 9px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; padding: 6px 14px; margin-bottom: 18px;
+    }
+    .modal__badge-dot { width: 5px; height: 5px; background: var(--gold); border-radius: 50%; animation: pulse 2s infinite; }
+
+    .modal__title { font-family: var(--ff-bebas); font-size: 32px; letter-spacing: 0.02em; color: #fff; margin-bottom: 6px; }
+    .modal__sub { font-size: 12px; color: rgba(255,255,255,0.45); margin-bottom: 30px; line-height: 1.55; }
+
+    .modal__label { display: block; font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
+
+    .modal__field {
+      width: 100%; background: transparent;
+      border: none; border-bottom: 1px solid rgba(255,255,255,0.15);
+      padding: 11px 0; color: #fff;
+      font-family: var(--ff-inter); font-size: 15px;
+      margin-bottom: 22px; transition: border-color 0.3s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .modal__field:focus { outline: none; border-bottom-color: var(--gold); }
+    .modal__field::placeholder { color: rgba(255,255,255,0.28); }
+    .modal__field option { background: #1a1a1a; color: #fff; }
+
+    .modal__submit { width: 100%; margin-top: 6px; padding: 17px; font-size: 13px; }
+    .modal__submit .btn-magnetic__label { display: block; }
+    .modal__note { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 12px; line-height: 1.6; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .pilares-grid { grid-template-columns: repeat(2,1fr); }
+    }
+
+    @media (max-width: 900px) {
+      section { padding: 72px 20px; }
+
+      /* Hero mobile: imagem em destaque ACIMA, texto abaixo */
+      #hero {
+        display: flex;
+        flex-direction: column;
+        min-height: auto;
+      }
+
+      /* Imagem sobe para o topo */
+      .hero__visual {
+        order: -1;
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        height: auto;
+        opacity: 1 !important;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+
+      /* Imagem em destaque total, não fantasma */
+      .hero__visual img {
+        opacity: 1;
+        object-position: top center;
+      }
+
+      .hero__content {
+        padding: 24px 24px 72px;
+        position: relative; z-index: 2;
+      }
+
+      .hero-desc { max-width: 100%; }
+
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(3) { border-bottom: none; }
+
+      .solucao-intro { grid-template-columns: 1fr; gap: 36px; }
+      .solucao-mock { max-width: 360px; margin: 0 auto; }
+      .solucao-intro .solucao-header { text-align: center; }
+      .solucao-intro .solucao-header .gold-line { margin: 0 auto 24px; }
+      .solucao-intro .solucao-desc { text-align: center; }
+      .problema-grid { grid-template-columns: 1fr; gap: 48px; }
+      .filtro-grid { grid-template-columns: 1fr; }
+      .filtro-divider { display: none; }
+      .filtro-bottom { padding: 32px 24px; }
+      .filtro-col:last-child { margin-top: 40px; }
+
+      .mentores-grid { grid-template-columns: 1fr; }
+
+      .prova-layout { grid-template-columns: 1fr; gap: 56px; }
+
+      .footer-row { flex-direction: column; align-items: flex-start; gap: 20px; }
+    }
+
+    @media (max-width: 560px) {
+      .hero-cta-group { flex-direction: column; align-items: flex-start; }
+      .btn-magnetic { width: 100%; justify-content: center; }
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .pilares-grid { grid-template-columns: 1fr; }
+      .mentor-photo { aspect-ratio: 16/9; object-position: center 20%; }
+      .filtro-bottom { padding: 28px 20px; }
+      .filtro-bottom .btn-magnetic { width: 100%; justify-content: center; }
+      footer { padding: 64px 20px 44px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HERO ===== -->
+  <section id="hero">
+
+    <!-- Left: text -->
+    <div class="hero__content">
+      <div class="hero-badge" id="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Grupo fechado no WhatsApp &nbsp;·&nbsp; Rio de Janeiro
+      </div>
+
+      <h1 class="hero-title" id="hero-title">
+        <span class="line">A mesa onde</span>
+        <span class="line">dono conversa</span>
+        <span class="line">com <span>dono.</span></span>
+      </h1>
+
+      <p class="hero-desc" id="hero-desc">
+        Grupo gratuito no WhatsApp para empresários com CNPJ ativo
+        no Rio de Janeiro. Sem curso, sem coach, sem vendedor disfarçado.
+      </p>
+
+      <div class="hero-cta-group" id="hero-cta">
+        <button class="btn-magnetic" data-open-modal>
+          <span class="btn-magnetic__label">Quero minha cadeira na mesa →</span>
+        </button>
+      </div>
+      <p class="hero-cta-micro" id="hero-micro">Entrada por aprovação · Leva menos de 2 minutos</p>
+    </div>
+
+    <!-- Right: cut-out PNG floats naturally, no box -->
+    <div class="hero__visual" id="hero-visual">
+      <img src="assets/Hero Sem Fundo.png" alt="" id="hero-visual-img" />
+    </div>
+
+  </section>
+
+  <!-- ===== STATS BAR ===== -->
+  <section id="stats">
+    <div class="stats-grid container">
+      <div class="stat-item reveal"><div class="stat-num">100%</div><div class="stat-label">Gratuito</div></div>
+      <div class="stat-item reveal"><div class="stat-num">RJ</div><div class="stat-label">Apenas Rio de Janeiro</div></div>
+      <div class="stat-item reveal"><div class="stat-num">0</div><div class="stat-label">Coaches · Gestores · CLTs</div></div>
+      <div class="stat-item reveal"><div class="stat-num">∞</div><div class="stat-label">Conexões reais</div></div>
+    </div>
+  </section>
+
+  <!-- ===== PROBLEMA + FILTRO ===== -->
+  <section id="problema">
+    <div class="container">
+      <div class="problema-grid">
+        <div>
+          <span class="section-tag reveal">O problema</span>
+          <p class="big-quote reveal">
+            <em>"Seu sócio não entende.</em><br />
+            Seu funcionário não pode saber.<br />
+            Sua esposa já cansou de ouvir."
+          </p>
+          <p class="reveal" style="font-size:15px;color:rgba(255,255,255,0.5);line-height:1.8;margin-top:20px;">
+            Quem decide de verdade, decide com quem também decide.
+            O problema é que empresários sérios passam anos construindo —
+            cercados de pessoas que dependem deles, mas sem nenhum par de nível.
+          </p>
+        </div>
+        <div class="problema-cards stagger-group">
+          <div class="problema-card stagger-item">
+            <span class="problema-card-num">01</span>
+            <h3>A decisão solitária</h3>
+            <p>Nenhum sócio disponível. Nenhum colega no mesmo nível. Você decide sozinho — e arca sozinho com o peso.</p>
+          </div>
+          <div class="problema-card stagger-item">
+            <span class="problema-card-num">02</span>
+            <h3>Networking virou teatro</h3>
+            <p>Evento caro, crachá, foto no feed. Você volta pra empresa com zero contato real e a mesma dor que tinha na segunda.</p>
+          </div>
+          <div class="problema-card stagger-item">
+            <span class="problema-card-num">03</span>
+            <h3>Conselho bom custa caro</h3>
+            <p>Guru de podcast, consultor que nunca teve CNPJ. Quem decide de verdade, decide com quem também decide.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtro -->
+      <div class="filtro-wrap">
+        <div class="filtro-header">
+          <span class="section-tag reveal">Quem pode entrar</span>
+          <h2 class="section-title reveal">Essa mesa <span>não é pra todo mundo.</span></h2>
+          <div class="gold-line reveal"></div>
+          <p class="reveal" style="font-size:15px;color:rgba(255,255,255,0.45);max-width:500px;line-height:1.8;">
+            O filtro não é burocracia — é o produto. Quando todo mundo que está na mesa
+            tem empresa real, o nível da conversa muda. E o resultado muda.
+          </p>
+        </div>
+
+        <div class="filtro-grid">
+          <div class="filtro-col">
+            <h3 class="sim reveal">Pode entrar</h3>
+            <ul class="filtro-list sim">
+              <li class="reveal"><i class="ph-thin ph-check-circle"></i><span>Dono de empresa com CNPJ ativo no Rio de Janeiro</span></li>
+              <li class="reveal"><i class="ph-thin ph-check-circle"></i><span>Tem time contratado — CLT, PJ ou parceiros frequentes</span></li>
+              <li class="reveal"><i class="ph-thin ph-check-circle"></i><span>Topa ir a encontros presenciais no RJ</span></li>
+              <li class="reveal"><i class="ph-thin ph-check-circle"></i><span>Quer conversa adulta, não grupo de bom dia</span></li>
+              <li class="reveal"><i class="ph-thin ph-check-circle"></i><span>Tem fé no trabalho — acredita que Deus honra quem trabalha com integridade</span></li>
+            </ul>
+          </div>
+          <div class="filtro-divider"></div>
+          <div class="filtro-col">
+            <h3 class="nao reveal">Não é pra você (agora)</h3>
+            <ul class="filtro-list nao">
+              <li class="reveal"><i class="ph-thin ph-x-circle"></i><span>Ainda não abriu CNPJ ou empreende só "nas horas vagas"</span></li>
+              <li class="reveal"><i class="ph-thin ph-x-circle"></i><span>Quer usar o grupo pra vender produto, curso ou consultoria</span></li>
+              <li class="reveal"><i class="ph-thin ph-x-circle"></i><span>Procura motivação, frase de efeito ou guru de Instagram</span></li>
+              <li class="reveal"><i class="ph-thin ph-x-circle"></i><span>Mora fora do RJ e não vai aos encontros presenciais</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="filtro-bottom reveal">
+          <p>Passando pelo filtro, você entra num grupo com empresários que constroem de verdade — e que se encontram presencialmente no Rio.</p>
+          <button class="btn-magnetic" data-open-modal>
+            <span class="btn-magnetic__label">Solicitar minha vaga</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SOLUÇÃO + MENTORES ===== -->
+  <section id="solucao">
+    <div class="container">
+      <div class="solucao-intro">
+        <div class="solucao-mock reveal">
+          <img src="assets/mockgrupo.png" alt="Grupo Mesa dos Donos no WhatsApp" />
+        </div>
+        <div class="solucao-text">
+          <div class="solucao-header reveal">
+            <span class="section-tag">O que é a Mesa dos Donos</span>
+            <h2 class="section-title">Grupo fechado no <span>WhatsApp.</span></h2>
+            <div class="gold-line"></div>
+          </div>
+          <p class="solucao-desc reveal">
+            Gratuito. Só para donos de empresa com CNPJ ativo no Rio de Janeiro.
+            Dentro dele: encontros presenciais, trocas estratégicas diárias e acesso
+            antecipado às oportunidades do ecossistema Fé no Front. Não é curso. É mesa.
+          </p>
+        </div>
+      </div>
+
+      <div class="pilares-grid stagger-group">
+        <div class="pilar-card stagger-item">
+          <div class="pilar-icon"><i class="ph-thin ph-users-three"></i></div>
+          <div class="pilar-title">Mesa Presencial</div>
+          <p class="pilar-desc">Encontros presenciais no Rio de Janeiro. Cara a cara, sem câmera, sem palco.</p>
+        </div>
+        <div class="pilar-card stagger-item">
+          <div class="pilar-icon"><i class="ph-thin ph-chat-circle-dots"></i></div>
+          <div class="pilar-title">Conversa Diária</div>
+          <p class="pilar-desc">Conteúdo estratégico e trocas reais no WhatsApp, todo dia. De quem está na operação.</p>
+        </div>
+        <div class="pilar-card stagger-item">
+          <div class="pilar-icon"><i class="ph-thin ph-funnel"></i></div>
+          <div class="pilar-title">Rede Filtrada</div>
+          <p class="pilar-desc">Só dono de empresa com CNPJ ativo no RJ. O filtro é o que garante o valor.</p>
+        </div>
+        <div class="pilar-card stagger-item">
+          <div class="pilar-icon"><i class="ph-thin ph-rocket-launch"></i></div>
+          <div class="pilar-title">Acesso Antecipado</div>
+          <p class="pilar-desc">Eventos, oportunidades e conexões do Fé no Front chegam primeiro na Mesa.</p>
+        </div>
+      </div>
+
+      <div class="mentores-title-wrap">
+        <span class="section-tag reveal">Quem puxa a cadeira</span>
+        <h2 class="section-title reveal">Construído por quem<br /><span>viveu o front.</span></h2>
+        <div class="gold-line reveal"></div>
+      </div>
+
+      <div class="mentores-grid stagger-group">
+        <div class="mentor-card stagger-item">
+          <div class="mentor-photo-wrap">
+            <img src="assets/Nando.png" alt="Nando Borba" class="mentor-photo" />
+          </div>
+          <div class="mentor-content">
+            <div class="mentor-name">Nando Borba</div>
+            <div class="mentor-role">Fundador da Elite Mídias · Google Partner · Certificado Google Ads &amp; Kommo CRM</div>
+            <div class="mentor-bio">
+              <p>Mais de R$5M em vendas corporativas B2B, R$3M faturados no digital e centenas de empresas atendidas pela Elite Mídias. Nando não chegou aqui com fórmula — chegou com diagnóstico: onde está o gargalo, o que ajustar, quanto investir e em qual canal.</p>
+              <p>Ele não é palestrante motivacional. É o cara que abre o painel de métricas do seu negócio e te mostra, com números, o que está funcionando e o que está queimando dinheiro. Co-fundador do Movimento Fé no Front.</p>
+            </div>
+            <div class="mentor-tags">
+              <span class="mentor-tag">+R$5M em vendas B2B</span>
+              <span class="mentor-tag">+R$3M no digital</span>
+              <span class="mentor-tag">Google Partner</span>
+            </div>
+          </div>
+        </div>
+        <div class="mentor-card stagger-item">
+          <div class="mentor-photo-wrap">
+            <img src="assets/Braian_oficial.png" alt="Braian Corrêa" class="mentor-photo" style="object-position: center 25%;" />
+          </div>
+          <div class="mentor-content">
+            <div class="mentor-name">Braian Corrêa</div>
+            <div class="mentor-role">Co-fundador do Movimento Fé no Front · CEO Grupo Brava</div>
+            <div class="mentor-bio">
+              <p>Braian é o cara que faz a pergunta que ninguém quer ouvir: você sabe o que você realmente vende? Não o que está no cardápio ou na proposta. O que o cliente compra, qual problema você resolve, qual transformação você entrega.</p>
+              <p>CEO do Grupo Brava, que reúne empresas em múltiplos segmentos com faturamento que gira em torno de R$6 milhões. Mentorado de Flávio Augusto e Caio Carneiro no programa Vende-C. Na Operação Rio, Braian conduz o bloco de produto e modelo de negócio: esteira de ofertas, previsibilidade de receita e crescimento com estrutura.</p>
+            </div>
+            <div class="mentor-tags">
+              <span class="mentor-tag">CEO · Grupo Brava R$6M+</span>
+              <span class="mentor-tag">Co-fundador Fé no Front</span>
+              <span class="mentor-tag">Mentorado Vende-C</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DEPOIMENTO + FAQ ===== -->
+  <section id="prova">
+    <div class="container">
+      <div class="prova-layout">
+
+        <div class="review-wrap">
+          <span class="section-tag reveal" style="align-self:flex-start">Quem já está dentro</span>
+          <h2 class="section-title reveal" style="align-self:flex-start">O que dizem<br /><span>os membros.</span></h2>
+          <div class="gold-line reveal" style="align-self:flex-start"></div>
+
+          <div class="review-card reveal">
+            <span class="review-card__quote-mark">"</span>
+            <div class="review-card__header">
+              <img src="assets/Eudes.png" alt="Eudes" class="review-card__avatar" />
+              <div class="review-card__meta">
+                <div class="review-card__name">Eudes</div>
+                <div class="review-card__subtitle">Empresário · Rio de Janeiro</div>
+              </div>
+              <svg class="review-card__google" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+            </div>
+            <div class="review-card__stars">
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <p class="review-card__body">
+              "O maior salto que dei como empresário não veio de um curso.
+              Veio do dia em que entrei numa sala com pessoas que entendiam,
+              exatamente, o que eu estava vivendo."
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <span class="section-tag reveal">Dúvidas</span>
+          <h2 class="section-title reveal">Perguntas<br /><span>frequentes.</span></h2>
+          <div class="gold-line reveal"></div>
+
+          <div class="reveal">
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFaq(this)">
+                Isso é pago? Tem algum custo escondido?
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer"><div class="faq-answer-inner">Não. Entrar na Mesa dos Donos é 100% gratuito. O filtro não é o preço — é o perfil. Dentro do grupo você terá visibilidade sobre programas do Fé no Front, mas nada é obrigatório.</div></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFaq(this)">
+                É um curso ou mentoria?
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer"><div class="faq-answer-inner">Não. É um grupo no WhatsApp com encontros presenciais no RJ. Não tem aula, módulo nem certificado. O valor vem das pessoas ao redor da mesa — não de conteúdo produzido.</div></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFaq(this)">
+                Preciso morar no Rio de Janeiro?
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer"><div class="faq-answer-inner">Sua empresa precisa ter CNPJ ativo no RJ e você precisa poder comparecer aos encontros presenciais. Se isso não se aplica, a Mesa não faz sentido pra você agora.</div></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFaq(this)">
+                Como funciona o filtro de entrada?
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer"><div class="faq-answer-inner">Você preenche o formulário, a gente valida o perfil em até 48h e avisa via WhatsApp. Não é pessoal — é pra proteger quem já está na mesa.</div></div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFaq(this)">
+                Vão tentar me vender algo lá dentro?
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer"><div class="faq-answer-inner">Não. Membro da Mesa não pode usar o grupo pra venda. Se quiser conhecer alguma oferta do Fé no Front, você é convidado — nunca empurrado.</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="footer-cta reveal" style="max-width:900px;margin:0 auto 72px;">
+      <h2 class="footer-cta-title">A mesa tem cadeiras<br /><span>contadas.</span></h2>
+      <p class="footer-cta-sub">Grupo gratuito no WhatsApp · Só donos com CNPJ ativo no Rio de Janeiro</p>
+      <button class="btn-magnetic" data-open-modal>
+        <span class="btn-magnetic__label">Quero minha cadeira na mesa →</span>
+      </button>
+      <p class="footer-cta-micro">Entrada por aprovação · Sem mensalidade · Sem upsell escondido</p>
+    </div>
+    <div style="max-width:1100px;margin:0 auto;">
+      <div class="footer-divider"></div>
+      <div class="footer-row">
+        <img src="assets/Logo Oficial Mesa dos Donos - Fé no Front.png" alt="Mesa dos Donos" class="footer-logo" />
+        <p class="footer-copy">© 2025 Mesa dos Donos · Todos os direitos reservados</p>
+        <div class="footer-brand">
+          <span class="footer-brand-label">Uma iniciativa</span>
+          <img src="assets/logofeupscale.jpg" alt="Fé no Front" class="footer-fnf-logo" />
+        </div>
+        <div class="footer-links">
+          <a href="https://instagram.com/fenofront" target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== MODAL ===== -->
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal">
+      <button class="modal__close" id="modal-close">✕</button>
+      <div class="modal__badge"><span class="modal__badge-dot"></span>Grupo gratuito · Rio de Janeiro</div>
+      <h3 class="modal__title">Garanta sua cadeira</h3>
+      <p class="modal__sub">Grupo fechado no WhatsApp para empresários do RJ.<br />Entrada por aprovação em até 48h.</p>
+      <form id="modal-form">
+        <label class="modal__label" for="m-nome">Nome completo</label>
+        <input class="modal__field" type="text" id="m-nome" name="nome" placeholder="Seu nome" required />
+        <label class="modal__label" for="m-whatsapp">WhatsApp</label>
+        <input class="modal__field" type="tel" id="m-whatsapp" name="whatsapp" placeholder="(21) 99999-9999" required />
+        <label class="modal__label" for="m-segmento">Segmento da empresa</label>
+        <select class="modal__field" id="m-segmento" name="segmento" required>
+          <option value="" disabled selected>Selecione</option>
+          <option>Varejo / Comércio</option>
+          <option>Gastronomia / Alimentação</option>
+          <option>Saúde / Bem-estar</option>
+          <option>Construção / Imóveis</option>
+          <option>Indústria / Manufatura</option>
+          <option>Serviços B2B</option>
+          <option>Tecnologia / Software</option>
+          <option>Educação</option>
+          <option>Beleza / Estética</option>
+          <option>Logística / Transporte</option>
+          <option>Outro</option>
+        </select>
+        <button type="submit" class="btn-magnetic modal__submit" id="modal-submit">
+          <span class="btn-magnetic__label" id="modal-submit-label">Entrar no grupo →</span>
+        </button>
+      </form>
+      <p class="modal__note">100% gratuito · Seus dados não serão compartilhados</p>
+    </div>
+  </div>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ===== MODAL =====
+    const backdrop = document.getElementById('modal-backdrop');
+    function openModal() { backdrop.classList.add('is-open'); document.body.style.overflow = 'hidden'; }
+    function closeModal() { backdrop.classList.remove('is-open'); document.body.style.overflow = ''; }
+
+    document.querySelectorAll('[data-open-modal]').forEach(el => el.addEventListener('click', openModal));
+    backdrop.addEventListener('click', e => { if (e.target === backdrop) closeModal(); });
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // WhatsApp mask
+    document.getElementById('m-whatsapp').addEventListener('input', function() {
+      let v = this.value.replace(/\D/g,'').slice(0,11);
+      if (v.length > 6) v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+      else if (v.length > 2) v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+      else if (v.length > 0) v = `(${v}`;
+      this.value = v;
+    });
+
+    // Form submit
+    const GOOGLE_SCRIPT_URL = 'COLE_A_URL_DO_APPS_SCRIPT_AQUI';
+    const WHATSAPP_LINK = 'https://chat.whatsapp.com/FfmYRQ1td3sDTGTfseNJgb';
+
+    document.getElementById('modal-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('modal-submit');
+      const label = document.getElementById('modal-submit-label');
+      btn.disabled = true;
+      label.textContent = 'Enviando...';
+      const data = {
+        timestamp: new Date().toLocaleString('pt-BR'),
+        nome: document.getElementById('m-nome').value,
+        whatsapp: document.getElementById('m-whatsapp').value,
+        segmento: document.getElementById('m-segmento').value
+      };
+      try {
+        if (GOOGLE_SCRIPT_URL !== 'COLE_A_URL_DO_APPS_SCRIPT_AQUI') {
+          await fetch(GOOGLE_SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+        }
+      } catch(err) { console.warn('Erro ao salvar:', err); }
+      window.open(WHATSAPP_LINK, '_blank');
+      closeModal();
+      btn.disabled = false;
+      label.textContent = 'Entrar no grupo →';
+      this.reset();
+    });
+
+    // FAQ
+    function toggleFaq(btn) {
+      const answer = btn.nextElementSibling;
+      const isOpen = btn.classList.contains('open');
+      document.querySelectorAll('.faq-question').forEach(q => {
+        q.classList.remove('open');
+        q.nextElementSibling.style.maxHeight = '0px';
+      });
+      if (!isOpen) { btn.classList.add('open'); answer.style.maxHeight = answer.scrollHeight + 'px'; }
+    }
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        const t = document.querySelector(this.getAttribute('href'));
+        if (t) t.scrollIntoView({ behavior:'smooth', block:'start' });
+      });
+    });
+
+    // ===== GSAP — respects prefers-reduced-motion =====
+    gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+
+      // Hero
+      gsap.to('#hero-badge', { opacity:1, duration:0.8, delay:0.35, ease:'power3.out' });
+
+      document.querySelectorAll('#hero-title .line').forEach((line, i) => {
+        gsap.fromTo(line,
+          { clipPath:'inset(0 0 100% 0)', yPercent:18 },
+          { clipPath:'inset(0 0 0% 0)', yPercent:0, duration:1.1, delay:0.65 + i*0.12, ease:'power4.out' }
+        );
+      });
+
+      gsap.to('#hero-desc',  { opacity:1, duration:0.8, delay:1.05, ease:'power3.out' });
+      gsap.to('#hero-cta',   { opacity:1, duration:0.8, delay:1.15, ease:'power3.out' });
+      gsap.to('#hero-micro', { opacity:1, duration:0.7, delay:1.28, ease:'power3.out' });
+      gsap.to('#hero-visual',{ opacity:1, duration:1.1, delay:0.55, ease:'power3.out' });
+
+      // Hero image parallax
+      gsap.to('#hero-visual-img', {
+        yPercent: -10, ease:'none',
+        scrollTrigger: { trigger:'#hero', start:'top top', end:'bottom top', scrub:1.5 }
+      });
+
+      // Scroll reveals
+      gsap.utils.toArray('.reveal').forEach(el => {
+        gsap.fromTo(el,
+          { opacity:0, y:40 },
+          { opacity:1, y:0, duration:0.85, ease:'power3.out',
+            scrollTrigger: { trigger:el, start:'top 89%', toggleActions:'play none none none' }
+          }
+        );
+      });
+
+      // Stagger groups
+      gsap.utils.toArray('.stagger-group').forEach(group => {
+        gsap.from(group.querySelectorAll('.stagger-item'), {
+          y:52, opacity:0, duration:0.9, stagger:0.11, ease:'power3.out',
+          scrollTrigger: { trigger:group, start:'top 80%', toggleActions:'play none none none' }
+        });
+      });
+
+      // Stats counters
+      const statsGrid = document.querySelector('.stats-grid');
+      if (statsGrid) {
+        const items = statsGrid.querySelectorAll('.stat-item');
+        const trigger = { trigger: statsGrid, start: 'top 85%', toggleActions: 'play none none none' };
+
+        // 100% — count up
+        const el0 = items[0].querySelector('.stat-num');
+        const obj0 = { val: 0 };
+        gsap.to(obj0, { val:100, duration:1.8, ease:'power2.out', scrollTrigger:trigger,
+          onUpdate: () => { el0.textContent = Math.round(obj0.val) + '%'; }
+        });
+
+        // RJ — scale pop
+        gsap.from(items[1].querySelector('.stat-num'), {
+          scale:0.5, opacity:0, duration:0.9, ease:'back.out(1.7)', scrollTrigger:trigger
+        });
+
+        // 0 — countdown from 50
+        const el2 = items[2].querySelector('.stat-num');
+        const obj2 = { val: 50 };
+        gsap.to(obj2, { val:0, duration:1.6, ease:'power3.out', scrollTrigger:trigger,
+          onUpdate: () => { el2.textContent = Math.round(obj2.val); }
+        });
+
+        // ∞ — scale pulse
+        gsap.from(items[3].querySelector('.stat-num'), {
+          scale:0.4, opacity:0, duration:1.0, ease:'elastic.out(1,0.5)', scrollTrigger:trigger
+        });
+      }
+
+    }); // end matchMedia
+
+    // Magnetic (always on — it's a pointer interaction, not an animation)
+    document.querySelectorAll('.btn-magnetic').forEach(btn => {
+      const label = btn.querySelector('.btn-magnetic__label');
+      if (!label) return;
+      btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        const x = e.clientX - r.left - r.width / 2;
+        const y = e.clientY - r.top - r.height / 2;
+        gsap.to(btn,   { x: x*0.32, y: y*0.32, duration:0.55, ease:'power3.out' });
+        gsap.to(label, { x: x*0.52, y: y*0.52, duration:0.55, ease:'power3.out' });
+      });
+      btn.addEventListener('mouseleave', () => {
+        gsap.to(btn,   { x:0, y:0, duration:0.65, ease:'elastic.out(1,0.4)' });
+        gsap.to(label, { x:0, y:0, duration:0.65, ease:'elastic.out(1,0.4)' });
+      });
+    });
+  </script>
+</body>
+</html>
