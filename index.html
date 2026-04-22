@@ -963,6 +963,10 @@
         <input class="modal__field" type="text" id="m-nome" name="nome" placeholder="Seu nome" required />
         <label class="modal__label" for="m-whatsapp">WhatsApp</label>
         <input class="modal__field" type="tel" id="m-whatsapp" name="whatsapp" placeholder="(21) 99999-9999" required />
+        <label class="modal__label" for="m-email">E-mail</label>
+        <input class="modal__field" type="email" id="m-email" name="email" placeholder="seu@email.com" required />
+        <label class="modal__label" for="m-instagram">Instagram ou site</label>
+        <input class="modal__field" type="text" id="m-instagram" name="instagram" placeholder="@empresa ou www.site.com.br" />
         <label class="modal__label" for="m-segmento">Segmento da empresa</label>
         <select class="modal__field" id="m-segmento" name="segmento" required>
           <option value="" disabled selected>Selecione</option>
@@ -1022,6 +1026,8 @@
         timestamp: new Date().toLocaleString('pt-BR'),
         nome: document.getElementById('m-nome').value,
         whatsapp: document.getElementById('m-whatsapp').value,
+        email: document.getElementById('m-email').value,
+        instagram: document.getElementById('m-instagram').value,
         segmento: document.getElementById('m-segmento').value
       };
       try {
