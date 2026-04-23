@@ -199,7 +199,7 @@
     }
     .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); }
     .stat-item {
-      padding: 44px 24px; text-align: center;
+      padding: 36px 24px; text-align: center;
       border-right: 1px solid var(--border);
     }
     .stat-item:last-child { border-right: none; }
@@ -584,8 +584,12 @@
       .hero-desc { max-width: 100%; }
 
       .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .stat-item { padding: 22px 16px; }
+      .stat-num { font-size: 38px; }
       .stat-item:nth-child(2) { border-right: none; }
       .stat-item:nth-child(3) { border-bottom: none; }
+      .stat-item:nth-child(1),
+      .stat-item:nth-child(2) { border-bottom: 1px solid var(--border); }
 
       .solucao-intro { grid-template-columns: 1fr; gap: 36px; }
       .solucao-mock { max-width: 360px; margin: 0 auto; }
@@ -658,10 +662,10 @@
   <!-- ===== STATS BAR ===== -->
   <section id="stats">
     <div class="stats-grid container">
-      <div class="stat-item reveal"><div class="stat-num">100%</div><div class="stat-label">Gratuito</div></div>
-      <div class="stat-item reveal"><div class="stat-num">RJ</div><div class="stat-label">Apenas Rio de Janeiro</div></div>
-      <div class="stat-item reveal"><div class="stat-num">0</div><div class="stat-label">Coaches · Gestores · CLTs</div></div>
-      <div class="stat-item reveal"><div class="stat-num">∞</div><div class="stat-label">Conexões reais</div></div>
+      <div class="stat-item reveal"><div class="stat-num">100%</div><div class="stat-label">Sem mensalidade</div></div>
+      <div class="stat-item reveal"><div class="stat-num">RJ</div><div class="stat-label">Só no Rio</div></div>
+      <div class="stat-item reveal"><div class="stat-num">0</div><div class="stat-label">Coaches ou gurus</div></div>
+      <div class="stat-item reveal"><div class="stat-num">REAL</div><div class="stat-label">Networking sem enrolação</div></div>
     </div>
   </section>
 
@@ -1129,9 +1133,9 @@
           onUpdate: () => { el2.textContent = Math.round(obj2.val); }
         });
 
-        // ∞ — scale pulse
+        // REAL — scale pop
         gsap.from(items[3].querySelector('.stat-num'), {
-          scale:0.4, opacity:0, duration:1.0, ease:'elastic.out(1,0.5)', scrollTrigger:trigger
+          scale:0.5, opacity:0, duration:0.9, ease:'back.out(1.7)', scrollTrigger:trigger
         });
       }
 
