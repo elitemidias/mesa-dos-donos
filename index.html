@@ -1050,13 +1050,18 @@
         instagram: document.getElementById('m-instagram').value,
         segmento: document.getElementById('m-segmento').value
       };
+      // Abre WhatsApp dentro do contexto síncrono do gesto do usuário (antes do await)
+      const newTab = window.open(WHATSAPP_LINK, '_blank');
+      if (!newTab) {
+        // Popup bloqueado (comum no mobile) — redireciona na mesma aba
+        window.location.href = WHATSAPP_LINK;
+      }
       try {
         if (GOOGLE_SCRIPT_URL !== 'COLE_A_URL_DO_APPS_SCRIPT_AQUI') {
           await fetch(GOOGLE_SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
         }
       } catch(err) { console.warn('Erro ao salvar:', err); }
       if (typeof fbq !== 'undefined') fbq('track', 'Lead');
-      window.open(WHATSAPP_LINK, '_blank');
       closeModal();
       btn.disabled = false;
       label.textContent = 'Entrar no grupo →';
